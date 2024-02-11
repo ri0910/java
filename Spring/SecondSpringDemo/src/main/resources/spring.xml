@@ -1,0 +1,31 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- bean definitions here -->
+<!--    <bean id="alien" class="org.riya.Alien" scope="prototype" autowire="byType">-->
+    <bean id="alien" class="org.riya.Alien" scope="prototype">
+        <property name="age" value="21"></property>
+        <property name="com">
+            <bean class="org.riya.Laptop" primary="true">
+            </bean>
+        </property>
+
+<!--        <constructor-arg type="org.riya.Laptop" ref="lap1"/>-->
+<!--        <constructor-arg type="int" value="21"/>-->
+<!--Contructor Injection-->
+<!--            <constructor-arg index="1" ref="lap1"/>-->
+<!--            <constructor-arg index="0" value="21"/>-->
+<!--            <constructor-arg name="lap" ref="lap1"/>-->
+<!--            <constructor-arg name="age" value="21"/>-->
+    </bean>
+
+<!--    <bean id="lap" class="org.riya.Laptop" primary="true">-->
+<!--    </bean>-->
+
+    <bean id="des" class="org.riya.Desktop" lazy-init="true">
+    </bean>
+
+
+</beans>
