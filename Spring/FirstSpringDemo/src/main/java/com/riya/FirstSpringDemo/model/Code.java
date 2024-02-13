@@ -1,4 +1,4 @@
-package com.riya.FirstSpringDemo;
+package com.riya.FirstSpringDemo.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

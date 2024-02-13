@@ -1,4 +1,4 @@
-package com.riya.FirstSpringDemo;
+package com.riya.FirstSpringDemo.model;
 
 import org.springframework.stereotype.Component;
 

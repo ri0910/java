@@ -1,5 +1,7 @@
 package com.riya.FirstSpringDemo;
 
+import com.riya.FirstSpringDemo.model.Laptop;
+import com.riya.FirstSpringDemo.service.LaptopService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -11,10 +13,16 @@ public class FirstSpringDemoApplication {
 		// Any object created or managed by spring called beans.
 
 		ApplicationContext context = SpringApplication.run(FirstSpringDemoApplication.class, args);
-		//System.out.println("Hello World");
+		System.out.println("Hello World");
 
-		Code c = context.getBean(Code.class);
-		c.code();
+		LaptopService service = context.getBean(LaptopService.class);
+
+		Laptop lap = context.getBean(Laptop.class);
+
+		service.addLaptopService(lap);
+
+//		Code c = context.getBean(Code.class);
+//		c.code();
 	}
 
 }
