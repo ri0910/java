@@ -1,4 +1,4 @@
-package com.riya.JobAppReactUsingSpringBoot.model;
+package com.riya.SpringDataRestJavaEx.model;
 
 
 import jakarta.persistence.Entity;
