@@ -4,20 +4,18 @@ package com.riya.JobSecurityWebsite.controller;
 import com.riya.JobSecurityWebsite.model.AuthRequest;
 import com.riya.JobSecurityWebsite.model.User;
 import com.riya.JobSecurityWebsite.service.JwtService;
+import com.riya.JobSecurityWebsite.service.UserInfoDetails;
 import com.riya.JobSecurityWebsite.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 public class UserController {
 
@@ -41,7 +39,8 @@ public class UserController {
         return service.getUser(user.getId());
     }
 
-    @GetMapping("/users")
+    @GetMapping("/admin/users")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<User> users(){
         return service.viewUsers();
     }
@@ -57,10 +56,21 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getUsers/{id}")
-    @PreAuthorize("hasAuthority('user')")
+    @GetMapping("/admin/getUsers/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public User getAllUsers(@PathVariable Integer id){
         return service.getUser(id);
+    }
+
+    @GetMapping({"/user/profile", "/admin/profile"})
+    @PreAuthorize("hasAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
+    public User myProfile(@AuthenticationPrincipal UserInfoDetails userInfoDetails){
+        return service.getUserByName(userInfoDetails.getUsername());
+    }
+
+    @PostMapping("/logout")
+    public String logOut(){
+        return "Log out successfully !";
     }
 
 

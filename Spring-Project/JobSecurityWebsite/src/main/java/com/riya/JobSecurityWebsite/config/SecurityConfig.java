@@ -33,8 +33,13 @@ public class SecurityConfig{
         return http.csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers("/home", "/signup", "/signin")
-                                .permitAll()
+                                .permitAll().requestMatchers("/user/*").hasAuthority("ROLE_USER")
+                                .requestMatchers("/admin/*").hasAuthority("ROLE_ADMIN")
                                 .anyRequest().authenticated()
+                )
+                .logout((logout) -> logout
+                        .logoutSuccessUrl("/logout")
+                        .permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

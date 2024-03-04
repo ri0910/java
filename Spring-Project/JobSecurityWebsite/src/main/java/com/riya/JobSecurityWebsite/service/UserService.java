@@ -45,4 +45,8 @@ public class UserService implements UserDetailsService {
         return userinfo.map(UserInfoDetails::new)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"+username));
     }
+
+    public User getUserByName(String username) {
+        return repo.findByUsername(username);
+    }
 }
