@@ -1,6 +1,7 @@
 package com.backend.SocialMediaBackend.api.controller;
 
 import com.backend.SocialMediaBackend.api.exception.UserAlreadyExistsException;
+import com.backend.SocialMediaBackend.api.model.LocalUserResponseBody;
 import com.backend.SocialMediaBackend.api.model.LoginUserBody;
 import com.backend.SocialMediaBackend.api.model.RegisterUser;
 import com.backend.SocialMediaBackend.api.services.LocalUserService;
@@ -33,13 +34,17 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signin(@RequestBody @Valid LoginUserBody loginUserBody) {
+    public ResponseEntity<LocalUserResponseBody> signin(@RequestBody @Valid LoginUserBody loginUserBody) {
         try {
+            LocalUserResponseBody localUserResponseBody = new LocalUserResponseBody();
             String token = localUserService.signin(loginUserBody);
-            return ResponseEntity.ok().body("Bearer " + token);
+            localUserResponseBody.setId(loginUserBody.getId());
+            localUserResponseBody.setEmail(loginUserBody.getEmail());
+            localUserResponseBody.setToken(token);
+            return ResponseEntity.ok(localUserResponseBody);
         } catch (RuntimeException ex) {
             logger.warn("Invalid credentials : " + loginUserBody.getEmail());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
     }

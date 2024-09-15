@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,24 +35,40 @@ public class JwtRequestFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
         final String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwtToken = null;
 
+        // Check for Bearer token
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwtToken = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwtToken);
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        // Authenticate only if there's no valid authentication already present
+        if (username != null &&
+                (SecurityContextHolder.getContext().getAuthentication() == null ||
+                        SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (jwtUtil.validateToken(jwtToken, username)) {
+            // Validate the token and set the authentication if valid
+            if (jwtUtil.validateToken(jwtToken, userDetails.getUsername())) {  // Use getUsername() method here
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
+        // If token is invalid, deny access (this ensures anonymous access is not allowed)
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            return;
+        }
+
+        // Continue with the chain for valid requests
         chain.doFilter(request, response);
     }
 }
+

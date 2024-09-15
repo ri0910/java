@@ -1,19 +1,23 @@
 package com.backend.SocialMediaBackend.api.model;
 
+
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
-public class LoginUserBody {
+@Getter
+@Setter
+public class LocalUserResponseBody {
 
-    @Getter
     @NotNull
     private Long id;
 
-    @Getter
     @NotNull
     private String email;
 
-    @Getter
     @NotNull
-    private String password;
+    private String token;
+
+
 }
